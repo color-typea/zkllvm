@@ -4,7 +4,7 @@
 
 using namespace nil::crypto3;
 
-constexpr std::size_t validators_amount_log2 = 6;
+constexpr std::size_t validators_amount_log2 = 10;
 constexpr std::size_t validators_per_leaf_log2 = 2;
 
 const std::array<typename hashes::sha2<256>::block_type, 39> precomputed_zero_hashes = {{
