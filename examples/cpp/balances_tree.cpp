@@ -4,6 +4,8 @@
 
 using namespace nil::crypto3;
 
+constexpr BIT_OPERATIONS_BUILTINS_BYTE_ORDER_MSB = true;
+
 constexpr std::size_t validators_amount_log2 = 6;
 constexpr std::size_t validators_per_leaf_log2 = 2;
 
@@ -115,7 +117,7 @@ typename hashes::sha2<256>::block_type hash_layer(std::array<typename hashes::sh
     [[private]] std::array<int64_t, precomputed_powers_of_two[validators_amount_log2]> validator_balances,
     typename hashes::sha2<256>::block_type expected_root,
     unsigned long long expected_total_balance) {
-
+    
     constexpr std::size_t validators_amount = precomputed_powers_of_two[validators_amount_log2];
     constexpr std::size_t potentially_non_zero_leaves_amount_log2 = validators_amount_log2 - validators_per_leaf_log2;
     constexpr std::size_t potentially_non_zero_leaves_amount = precomputed_powers_of_two[potentially_non_zero_leaves_amount_log2];
@@ -126,18 +128,18 @@ typename hashes::sha2<256>::block_type hash_layer(std::array<typename hashes::sh
         typedef __zkllvm_field_pallas_base __attribute__((ext_vector_type(64))) decomposed_int64_type;
 
         decomposed_int64_type first_balance_in_block_bits =
-            __builtin_assigner_bit_decomposition64(validator_balances[4*i], true);
+            __builtin_assigner_bit_decomposition64(validator_balances[4*i], BIT_OPERATIONS_BUILTINS_BYTE_ORDER_MSB);
         decomposed_int64_type second_balance_in_block_bits =
-            __builtin_assigner_bit_decomposition64(validator_balances[4*i+1], true);
+            __builtin_assigner_bit_decomposition64(validator_balances[4*i+1], BIT_OPERATIONS_BUILTINS_BYTE_ORDER_MSB);
         decomposed_int64_type third_balance_in_block_bits =
-            __builtin_assigner_bit_decomposition64(validator_balances[4*i+2], true);
+            __builtin_assigner_bit_decomposition64(validator_balances[4*i+2], BIT_OPERATIONS_BUILTINS_BYTE_ORDER_MSB);
         decomposed_int64_type fourth_balance_in_block_bits =
-            __builtin_assigner_bit_decomposition64(validator_balances[4*i+3], true);
+            __builtin_assigner_bit_decomposition64(validator_balances[4*i+3], BIT_OPERATIONS_BUILTINS_BYTE_ORDER_MSB);
 
         typename algebra::curves::pallas::base_field_type::value_type first_block = __builtin_assigner_bit_composition128(
-            first_balance_in_block_bits, second_balance_in_block_bits, true);
+            first_balance_in_block_bits, second_balance_in_block_bits, BIT_OPERATIONS_BUILTINS_BYTE_ORDER_MSB);
         typename algebra::curves::pallas::base_field_type::value_type second_block = __builtin_assigner_bit_composition128(
-            third_balance_in_block_bits, fourth_balance_in_block_bits, true);
+            third_balance_in_block_bits, fourth_balance_in_block_bits, BIT_OPERATIONS_BUILTINS_BYTE_ORDER_MSB);
 
         potentially_non_zero_leaves[i] = {first_block, second_block};
     }
